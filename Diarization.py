@@ -6,6 +6,7 @@ from Tripartite import makedir
 
 
 def configurate():
+    call_command("pip install ")
     call_command("pip install pydub")
     call_command("pip install light-the-torch")
     call_command("ltt install torch torchvision torchaudio")
@@ -16,9 +17,9 @@ def configurate():
 
 # @markdown Enter the URL of the YouTube video, or the path to the video/audio file you want to transcribe, give the output path, etc. and run the cell. HTML file embeds the video for YouTube, and audio for media files.
 
-video_path = "L:/year3_sem1/SA/video_image/split/video/3000277524.mp4"  # @param {type:"string"}
+video_path = "E:/year3_sem1/SA/video_image/split/video/3000277524.mp4"  # @param {type:"string"}
 # @markdown ---
-output_path = "L:/year3_sem1/SA/video_image/split/transcript"  # @param {type:"string"}
+output_path = "E:/year3_sem1/SA/video_image/split/transcript"  # @param {type:"string"}
 output_path = str(Path(output_path))
 # @markdown ---
 # @markdown #### **Title for transcription of media file**
@@ -32,15 +33,15 @@ access_token = "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"  # @param {type:"string"}
 # @markdown **Run this cell again if you change the video.**
 
 
-def speakerDiarization(video_path, output_path, num):
+def speakerDiarization(video_path, output_path, video):
     import locale
 
     locale.getpreferredencoding = lambda: "UTF-8"
 
     # 儲存處理中產生的文件
-    makedir(f"{output_path}/handle/video{num}")
+    makedir(f"{output_path}/handle/{os.path.splitext(video)[0]}")
 
-    input_wav_path = f"{output_path}/handle/video{num}"
+    input_wav_path = f"{output_path}/handle/{os.path.splitext(video)[0]}"
 
     call_command(f"ffmpeg -i {video_path} -vn -acodec pcm_s16le -ar 16000 -ac 1 -y {input_wav_path}/input.wav")
 
@@ -144,7 +145,7 @@ def speakerDiarization(video_path, output_path, num):
             end = (shift + c['end'] * 1000.0) / 1000.0
             txt.append(f'[{timeStr(start)} --> {timeStr(end)}] [{speaker}] {c["text"]}\n')
 
-    with open(f"{input_wav_path}/capspeaker{num}.txt", "w", encoding='utf-8') as file:
+    with open(f"{input_wav_path}/capspeaker.txt", "w", encoding='utf-8') as file:
         s = "".join(txt)
         file.write(s)
 

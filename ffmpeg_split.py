@@ -36,12 +36,13 @@ def to_hms_str(times):
     m = times[3:5]
     s = times[7:9]
     if times[10] >= "5":
-        s = int(times[7:9]) + 1
+        s2 = int(times[8]) + 1
+        s = f"{times[7]}{s2}"
 
     return f"{h}:{m}:{s}"
 
 
-def splitVideo(split_list, video_path, output_path, num):
+def splitVideo(split_list, video_path, output_path, video):
     index = 0
     for fragment in split_list:
         start_time = fragment[0]
@@ -52,11 +53,11 @@ def splitVideo(split_list, video_path, output_path, num):
         out_end_time = end_time
 
         call_command(
-            f'ffmpeg -i {video_path} -vcodec copy -an -ss {start_time} -to {end_time} {output_path}/video{num}/{fragment[2]}/{file_name}_{index}_({out_start_time.replace(":", "")}-{out_end_time.replace(":", "")}){suffix} -y')
+            f'ffmpeg -i {video_path} -vcodec copy -an -ss {start_time} -to {end_time} {output_path}/{os.path.splitext(video)[0]}/{fragment[2]}/{file_name}_{index}_({out_start_time.replace(":", "")}-{out_end_time.replace(":", "")}){suffix} -y')
         index += 1
 
 
-def splitAudio(split_list, video_path, output_path, num):
+def splitAudio(split_list, video_path, output_path, video):
     index = 0
     for fragment in split_list:
         start_time = fragment[0]
@@ -67,7 +68,7 @@ def splitAudio(split_list, video_path, output_path, num):
         out_end_time = end_time
 
         call_command(
-            f'ffmpeg -i {video_path} -vn -acodec copy -ss {start_time} -to {end_time} {output_path}/video{num}/{fragment[2]}/{file_name}_{index}_({out_start_time.replace(":", "")}-{out_end_time.replace(":", "")}).wav -y')
+            f'ffmpeg -i {video_path} -vn -acodec copy -ss {start_time} -to {end_time} {output_path}/{os.path.splitext(video)[0]}/{fragment[2]}/{file_name}_{index}_({out_start_time.replace(":", "")}-{out_end_time.replace(":", "")}).wav -y')
         index += 1
 
 

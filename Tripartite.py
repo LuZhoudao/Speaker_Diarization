@@ -7,30 +7,30 @@ def makedir(new_path):
         os.makedirs(new_path)
 
 
-def makedirInAllFiles(speaker, path_list, num):
+def makedirInAllFiles(speaker, path_list, video):
     """當有新的speaker,為三個種類文檔都創一個新的speaker文件 """
-    if not os.path.exists(f"{path_list[0]}/video{num}/{speaker}"):
+    if not os.path.exists(f"{path_list[0]}/{os.path.splitext(video)[0]}/{speaker}"):
         for path in path_list:
-            makedir(f"{path}/video{num}/{speaker}")
+            makedir(f"{path}/{os.path.splitext(video)[0]}/{speaker}")
 
 
-def splitText(new_lines, num, file_name, path_list):
+def splitText(new_lines, video, file_name, path_list):
     index = 0
     for line in new_lines:
         start_time = line[0]
         end_time = line[1]
         speaker = line[2]
         txt = line[-1]
-        makedirInAllFiles(speaker, path_list, num)
-        with open(f"{path_list[2]}/video{num}/{speaker}/{file_name}_{index}_({start_time.replace(':', '')}-{end_time.replace(':', '')}).txt", "w", encoding='utf-8') as file:
+        makedirInAllFiles(speaker, path_list, video)
+        with open(f"{path_list[2]}/{os.path.splitext(video)[0]}/{speaker}/{file_name}_{index}_({start_time.replace(':', '')}-{end_time.replace(':', '')}).txt", "w", encoding='utf-8') as file:
             file.write(txt)
 
         index += 1
 
 
-def tripartite(file_path, output_path, path_list, num):
+def tripartite(file_path, output_path, path_list, video):
     file_name = os.path.splitext(file_path)[0].split("/")[-1]
-    with open(f"{output_path}/handle/video{num}/capspeaker{num}.txt", 'r') as f:
+    with open(f"{output_path}/handle/{os.path.splitext(video)[0]}/capspeaker.txt", 'r') as f:
         lines = f.readlines()
 
     # 處理txt原文件
@@ -50,8 +50,8 @@ def tripartite(file_path, output_path, path_list, num):
         else:
             new_lines.append(new_line)
 
-    splitText(new_lines, num, file_name, path_list)
+    splitText(new_lines, video, file_name, path_list)
     ffmpeg_split.splitVideo(new_lines, file_path,
-                            f"{output_path}/video", num)
+                            f"{output_path}/video", video)
     ffmpeg_split.splitAudio(new_lines, file_path,
-                            f"{output_path}/audio", num)
+                            f"{output_path}/audio", video)
